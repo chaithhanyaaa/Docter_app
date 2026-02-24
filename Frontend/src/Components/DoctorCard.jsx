@@ -9,21 +9,26 @@ function DoctorCard({ doctor, user, onBook }) {
 
   return (
     <div className="card">
-      <img
-        src={doctor.imageUrl}
-        alt={doctor.name}
-        onError={(e) => {
-          e.target.src = "/fallback-doctor.png";
-        }}
-      />
+      <div className="card-image">
+        <img
+          src={doctor.imageUrl}
+          alt={doctor.name}
+          onError={(e) => {
+            e.target.src = "/Fallback-img.jpeg";
+          }}
+        />
+        <span className="card-badge">Available</span>
+      </div>
 
-      <h3>{doctor.name}</h3>
-      <p>{doctor.specialization}</p>
-      <p>{doctor.experience} years experience</p>
+      <div className="card-content">
+        <h3>{doctor.name}</h3>
+        <p className="specialization">{doctor.specialization}</p>
+        <p className="experience">💼 {doctor.experience} Years Experience</p>
 
-      <button onClick={handleBookClick}>
-        Book Appointment
-      </button>
+        <button className="card-btn" onClick={handleBookClick}>
+          Book Appointment
+        </button>
+      </div>
     </div>
   );
 }
