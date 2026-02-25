@@ -3,6 +3,7 @@ import Navbar from "../Components/Navbar";
 import DoctorCard from "../Components/DoctorCard";
 import Banner from "../Components/Banner";
 import Footer from "../Components/Footer";
+import BookingModal from "../Components/BookingModal";
 import doctors from "../Data/doctors";
 
 function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAddAppointment, onCancelAppointment }) {
@@ -10,8 +11,6 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [visibleCount, setVisibleCount] = useState(4);
-  const [bookingDate, setBookingDate] = useState("");
-  const [bookingTime, setBookingTime] = useState("");
 
   // Get unique specialties for filtering
   const specialties = ["All", ...new Set(doctors.map(d => d.specialization))];
@@ -36,25 +35,22 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
     setVisibleCount(prev => prev + 4);
   };
 
-  const handleBookClick = () => {
+  const handleBookClick = (doctor) => {
     if (!user) {
       alert("Please login to book an appointment");
       return;
     }
-    setSelectedDoctor({ ...selectedDoctor });
+    setSelectedDoctor(doctor);
   };
 
-  const confirmBooking = () => {
-    if (!bookingDate || !bookingTime) {
-      alert("Please select date and time");
-      return;
-    }
+  const handleBookingConfirm = (bookingData) => {
+    // Add appointment to state
+    onAddAppointment(bookingData.doctorName, bookingData.date, bookingData.timeSlot);
     
-    onAddAppointment(selectedDoctor, bookingDate, bookingTime);
-    alert(`Appointment booked with ${selectedDoctor.name} on ${bookingDate} at ${bookingTime}`);
-    setSelectedDoctor(null);
-    setBookingDate("");
-    setBookingTime("");
+    // Close modal after short delay to show success message
+    setTimeout(() => {
+      setSelectedDoctor(null);
+    }, 2000);
   };
 
   return (
@@ -133,7 +129,7 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
               key={doc.id}
               doctor={doc}
               user={user}
-              onBook={() => setSelectedDoctor(doc)}
+              onBook={() => handleBookClick(doc)}
             />
           ))}
         </div>
@@ -150,46 +146,12 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
 
       {/* 📅 BOOKING MODAL */}
       {selectedDoctor && (
-        <div className="modal-backdrop" onClick={() => setSelectedDoctor(null)}>
-          <div className="booking-form" onClick={(e) => e.stopPropagation()}>
-            <h3>Book Appointment</h3>
-
-            <div className="doctor-info">
-              <p>{selectedDoctor.name}</p>
-              <p>{selectedDoctor.specialization}</p>
-            </div>
-
-            <label>Select Date</label>
-            <input 
-              type="date" 
-              value={bookingDate}
-              onChange={(e) => setBookingDate(e.target.value)}
-            />
-
-            <div className="form-row">
-              <div>
-                <label>Select Time</label>
-                <input 
-                  type="time" 
-                  value={bookingTime}
-                  onChange={(e) => setBookingTime(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <button className="primary" onClick={confirmBooking}>
-              Confirm Booking
-            </button>
-
-            <button className="secondary" onClick={() => {
-              setSelectedDoctor(null);
-              setBookingDate("");
-              setBookingTime("");
-            }}>
-              Cancel
-            </button>
-          </div>
-        </div>
+        <BookingModal
+          doctor={selectedDoctor}
+          user={user}
+          onConfirm={handleBookingConfirm}
+          onClose={() => setSelectedDoctor(null)}
+        />
       )}
 
       {/* 🔻 FOOTER */}
