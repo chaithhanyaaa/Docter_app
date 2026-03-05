@@ -1,82 +1,112 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
 import Home from "./Pages/Home";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import BookAppointment from "./Pages/BookAppointment";
+import MyAppointments from "./Pages/MyAppointments";
+import { isTokenExpired, clearAuthData, getAuthUser } from "./utils/auth";
 import "./App.css";
 
+// Protected Route wrapper
+function ProtectedRoute({ children }) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
+
 function App() {
-  // 🔐 GLOBAL AUTH STATE
   const [user, setUser] = useState(null);
-  
-  // 📅 APPOINTMENTS STATE
-  const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
 
-  // 🪟 LOGIN MODAL STATE
-  const [showLogin, setShowLogin] = useState(false);
-  
-  // 📝 SIGNUP MODAL STATE
-  const [showSignup, setShowSignup] = useState(false);
+  // Check for existing token and user on load
+  useEffect(() => {
+    // Get token from localStorage
+    const token = localStorage.getItem('token');
+    
+    // Check if token exists and if it's expired
+    if (token && isTokenExpired(token)) {
+      // Token is expired, clear auth data and redirect to login
+      console.log('Token expired, logging out...');
+      clearAuthData();
+      navigate('/login');
+      return;
+    }
+    
+    // Token is valid or doesn't exist, try to get user data
+    const userData = getAuthUser();
+    if (userData) {
+      setUser(userData);
+    }
+  }, [navigate]);
 
-  // 📅 ADD APPOINTMENT
-  const addAppointment = (doctor, date, time) => {
-    const newAppointment = {
-      id: Date.now(),
-      doctor: doctor,
-      date: date,
-      time: time,
-      status: "Confirmed"
-    };
-    setAppointments([...appointments, newAppointment]);
+  const handleLogin = (userData) => {
+    setUser(userData);
+    localStorage.setItem('user', JSON.stringify(userData));
+    navigate('/');
   };
 
-  // 📅 CANCEL APPOINTMENT
-  const cancelAppointment = (appointmentId) => {
-    setAppointments(appointments.filter(apt => apt.id !== appointmentId));
+  const handleLogout = () => {
+    clearAuthData();
+    setUser(null);
+    navigate('/');
   };
 
   return (
-    <>
-      {/* 🏠 MAIN APP */}
-      <Home
-        user={user}
-        appointments={appointments}
-        onLoginClick={() => setShowLogin(true)}
-        onSignupClick={() => setShowSignup(true)}
-        onLogout={() => setUser(null)}
-        onAddAppointment={addAppointment}
-        onCancelAppointment={cancelAppointment}
+    <Routes>
+      {/* Home Page - Public */}
+      <Route 
+        path="/" 
+        element={
+          <Home 
+            user={user} 
+            onLogout={handleLogout}
+          />
+        } 
       />
 
-      {/* 🔐 LOGIN POPUP */}
-      {showLogin && (
-        <Login
-          onLogin={(loggedInUser) => {
-            setUser(loggedInUser);
-            setShowLogin(false);
-          }}
-          onClose={() => setShowLogin(false)}
-          onSwitchToSignup={() => {
-            setShowLogin(false);
-            setShowSignup(true);
-          }}
-        />
-      )}
+      {/* Login Page */}
+      <Route 
+        path="/login" 
+        element={
+          <Login 
+            onLogin={handleLogin}
+          />
+        } 
+      />
 
-      {/* 📝 SIGNUP POPUP */}
-      {showSignup && (
-        <Signup
-          onSignup={(newUser) => {
-            setUser(newUser);
-            setShowSignup(false);
-          }}
-          onClose={() => setShowSignup(false)}
-          onSwitchToLogin={() => {
-            setShowSignup(false);
-            setShowLogin(true);
-          }}
-        />
-      )}
-    </>
+      {/* Signup Page */}
+      <Route 
+        path="/signup" 
+        element={
+          <Signup 
+            onSignup={() => navigate('/login')}
+          />
+        } 
+      />
+
+      {/* Book Appointment Page - Protected */}
+      <Route 
+        path="/book/:doctorId" 
+        element={
+          <ProtectedRoute>
+            <BookAppointment user={user} />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* My Appointments Page - Protected */}
+      <Route 
+        path="/my-appointments" 
+        element={
+          <ProtectedRoute>
+            <MyAppointments user={user} onCancel={() => {}} />
+          </ProtectedRoute>
+        } 
+      />
+    </Routes>
   );
 }
 

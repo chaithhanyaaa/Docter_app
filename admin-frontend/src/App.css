@@ -22,6 +22,7 @@ body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe
 .btn{background:#111827;color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
 .btn:disabled{opacity:0.6;cursor:not-allowed}
 .btn-danger{background:var(--danger)}
+.btn-warning{background:#f59e0b}
 .btn-logout{background:transparent;color:var(--muted);border:1px solid var(--border);padding:6px 10px}
 
 .page h1{margin:0 0 18px 0}
@@ -48,3 +49,9 @@ body{margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe
 .mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', 'Courier New', monospace;font-size:0.85rem;color:var(--muted)}
 
 .admin-info{color:var(--muted)}
+
+/* Doctor table styles */
+.doctor-thumb{width:50px;height:50px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
+.status{padding:4px 8px;border-radius:4px;font-size:0.8rem;font-weight:600}
+.status-pending{background:#fef3c7;color:#92400e}
+.status-approved{background:#d1fae5;color:#065f46}

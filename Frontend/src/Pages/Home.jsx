@@ -1,23 +1,44 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import DoctorCard from "../Components/DoctorCard";
 import Banner from "../Components/Banner";
 import Footer from "../Components/Footer";
-import BookingModal from "../Components/BookingModal";
-import doctors from "../Data/doctors";
+import API from "../api/axios";
 
-function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAddAppointment, onCancelAppointment }) {
+function Home({ user, onLogout }) {
+  const [doctors, setDoctors] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [visibleCount, setVisibleCount] = useState(4);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // Get unique specialties for filtering
+  // Fetch doctors from API
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoading(true);
+        const response = await API.get('/doctors');
+        // Filter only approved doctors
+        const approvedDoctors = response.data.filter(d => d.status === 'APPROVED');
+        setDoctors(approvedDoctors);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching doctors:', err);
+        setError('Failed to load doctors. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctors();
+  }, []);
+
   const specialties = ["All", ...new Set(doctors.map(d => d.specialization))];
 
-  // ✅ FILTERED DOCTORS
   const filteredDoctors = doctors
-    .filter((d) => d.status === "APPROVED")
     .filter((d) => 
       selectedSpecialty === "All" || d.specialization === selectedSpecialty
     )
@@ -37,20 +58,10 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
 
   const handleBookClick = (doctor) => {
     if (!user) {
-      alert("Please login to book an appointment");
+      navigate('/login');
       return;
     }
-    setSelectedDoctor(doctor);
-  };
-
-  const handleBookingConfirm = (bookingData) => {
-    // Add appointment to state
-    onAddAppointment(bookingData.doctorName, bookingData.date, bookingData.timeSlot);
-    
-    // Close modal after short delay to show success message
-    setTimeout(() => {
-      setSelectedDoctor(null);
-    }, 2000);
+    navigate(`/book/${doctor.doctorId}`);
   };
 
   return (
@@ -58,11 +69,7 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
       {/* 🔝 NAVBAR */}
       <Navbar
         user={user}
-        appointments={appointments}
-        onLoginClick={onLoginClick}
-        onSignupClick={onSignupClick}
         onLogout={onLogout}
-        onCancelAppointment={onCancelAppointment}
       />
 
       {/* 🔍 SEARCH SECTION */}
@@ -122,37 +129,41 @@ function Home({ user, appointments, onLoginClick, onSignupClick, onLogout, onAdd
           </h2>
           <p>Choose from our network of highly qualified medical professionals</p>
         </div>
-        
-        <div className="doctor-list">
-          {displayedDoctors.map((doc) => (
-            <DoctorCard
-              key={doc.id}
-              doctor={doc}
-              user={user}
-              onBook={() => handleBookClick(doc)}
-            />
-          ))}
-        </div>
 
-        {/* Show More Button */}
-        {hasMore && (
-          <div className="show-more-container">
-            <button className="show-more-btn" onClick={handleShowMore}>
-              Show More Doctors ({filteredDoctors.length - visibleCount} more)
-            </button>
+        {loading ? (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Loading doctors...</p>
           </div>
+        ) : error ? (
+          <div className="error-container">
+            <p>{error}</p>
+            <button onClick={() => window.location.reload()}>Retry</button>
+          </div>
+        ) : (
+          <>
+            <div className="doctor-list">
+              {displayedDoctors.map((doc) => (
+                <DoctorCard
+                  key={doc.doctorId}
+                  doctor={doc}
+                  user={user}
+                  onBook={() => handleBookClick(doc)}
+                />
+              ))}
+            </div>
+
+            {/* Show More Button */}
+            {hasMore && (
+              <div className="show-more-container">
+                <button className="show-more-btn" onClick={handleShowMore}>
+                  Show More Doctors ({filteredDoctors.length - visibleCount} more)
+                </button>
+              </div>
+            )}
+          </>
         )}
       </section>
-
-      {/* 📅 BOOKING MODAL */}
-      {selectedDoctor && (
-        <BookingModal
-          doctor={selectedDoctor}
-          user={user}
-          onConfirm={handleBookingConfirm}
-          onClose={() => setSelectedDoctor(null)}
-        />
-      )}
 
       {/* 🔻 FOOTER */}
       <Footer />

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../App'
+import { loginDoctor as loginDoctorAPI, storeAuthData } from '../services/api'
 
 function DoctorLogin() {
-  const { loginDoctor, doctor } = useAuth()
+  const { loginDoctor } = useAuth()
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ function DoctorLogin() {
   })
 
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -21,33 +23,43 @@ function DoctorLogin() {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
-    // Mock authentication (no backend yet)
-    // In production, this would be an API call
-    if (formData.email && formData.password) {
-      // Create auth object
-      const doctorAuth = {
-        id: Date.now(),
-        name: formData.email.split('@')[0], // Mock name from email
+    try {
+      const response = await loginDoctorAPI({
         email: formData.email,
-        role: 'DOCTOR',
-        status: doctor?.status || 'PENDING',
-        qualification: doctor?.qualification || '',
-        specialization: doctor?.specialization || '',
-        experience: doctor?.experience || '',
-        imageUrl: doctor?.imageUrl || ''
+        password: formData.password
+      })
+
+      // Backend returns plain JWT string directly
+      const token = typeof response === 'string' ? response : response.token
+
+      if (!token) {
+        throw new Error('Invalid server response - no token received')
       }
 
-      // Login doctor
-      loginDoctor(doctorAuth)
+      // Store token
+      storeAuthData(token, { email: formData.email })
+
+      // Update auth context
+      loginDoctor({ email: formData.email })
 
       // Redirect to dashboard
       navigate('/dashboard')
-    } else {
-      setError('Please enter email and password')
+
+    } catch (err) {
+      console.error('Login error:', err)
+      setError(
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        'Invalid email or password'
+      )
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -58,13 +70,12 @@ function DoctorLogin() {
         <p className="auth-subtitle">Access your doctor panel</p>
 
         {error && (
-          <div className="warning-message" style={{ marginBottom: '1rem' }}>
+          <div className="error-message" style={{ marginBottom: '1rem', color: '#dc2626', backgroundColor: '#fef2f2', padding: '0.75rem', borderRadius: '0.375rem' }}>
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
-          {/* Email */}
           <div className="form-group">
             <label className="form-label">Email</label>
             <input
@@ -78,7 +89,6 @@ function DoctorLogin() {
             />
           </div>
 
-          {/* Password */}
           <div className="form-group">
             <label className="form-label">Password</label>
             <input
@@ -92,9 +102,8 @@ function DoctorLogin() {
             />
           </div>
 
-          {/* Submit Button */}
-          <button type="submit" className="btn btn-primary">
-            Login
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

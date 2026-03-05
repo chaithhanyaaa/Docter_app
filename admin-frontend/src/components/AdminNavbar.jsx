@@ -1,7 +1,16 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function AdminNavbar({ admin, onLogout }) {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    onLogout();
+    navigate('/login');
+  };
+
 	return (
 		<header className="admin-nav">
 			<div className="nav-left">
@@ -14,7 +23,7 @@ export default function AdminNavbar({ admin, onLogout }) {
 			</div>
 			<div className="nav-right">
 				<div className="admin-info">{admin?.name} ({admin?.role})</div>
-				<button className="btn btn-logout" onClick={onLogout}>Logout</button>
+				<button className="btn btn-logout" onClick={handleLogout}>Logout</button>
 			</div>
 		</header>
 	);

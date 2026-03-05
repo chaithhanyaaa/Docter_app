@@ -456,14 +456,18 @@ body {
 
 .image-banner {
   width: 100%;
-  height: 580px;
+  height: 700px;
   overflow: hidden;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .image-banner img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   transition: transform 6s ease;
 }
 
@@ -721,6 +725,193 @@ body {
   color: white;
   border-color: transparent;
   box-shadow: 0 4px 15px rgba(13, 148, 136, 0.35);
+}
+
+/* ========================================
+   🧑‍⚕️ PROFESSIONAL DOCTOR CARD
+   ======================================== */
+.doctor-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-align: center;
+  transition: var(--transition-slow);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--gray-light);
+  position: relative;
+}
+
+.doctor-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--medical-green-light);
+}
+
+.doctor-card-image {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+}
+
+.doctor-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: var(--transition-slow);
+}
+
+.doctor-card:hover .doctor-card-image img {
+  transform: scale(1.08);
+}
+
+.doctor-card-badge {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--medical-green);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.available-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.experience-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--medical-green);
+  color: white;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+}
+
+.doctor-card-content {
+  padding: 24px;
+}
+
+.doctor-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.doctor-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin: 0;
+}
+
+.experience-level {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.doctor-specialization {
+  color: var(--medical-green);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+.doctor-qualification {
+  color: var(--gray);
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.doctor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 14px;
+  background: var(--gray-lighter);
+  border-radius: var(--radius);
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--dark-light);
+  font-size: 13px;
+}
+
+.detail-item svg {
+  width: 16px;
+  height: 16px;
+  color: var(--medical-green);
+  flex-shrink: 0;
+}
+
+.detail-item.fees {
+  color: var(--medical-teal);
+  font-weight: 600;
+}
+
+.detail-item.fees svg {
+  color: var(--medical-teal);
+}
+
+.doctor-card-btn {
+  width: 100%;
+  padding: 14px 20px;
+  background: white;
+  color: var(--medical-green-dark);
+  border: 2px solid var(--medical-green);
+  cursor: pointer;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 600;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.doctor-card-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.doctor-card-btn:hover {
+  background: var(--gradient-medical);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
 }
 
 /* ========================================
@@ -1355,7 +1546,7 @@ body {
   }
 
   .image-banner {
-    height: 240px;
+    height: 350px;
     border-radius: var(--radius-lg);
   }
 
@@ -1437,3 +1628,589 @@ body {
 
 /* Stagger animation for more cards */
 .card:nth-child(n+9) { animation-delay: 0.45s; }
+
+/* ========================================
+   🔐 AUTH PAGES (LOGIN/SIGNUP)
+   ======================================== */
+.auth-page {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  background: var(--gray-lighter);
+  margin-top: 80px;
+}
+
+.auth-container {
+  background: white;
+  padding: 48px;
+  width: 100%;
+  max-width: 440px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.auth-header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: var(--gray);
+  font-size: 15px;
+}
+
+.auth-error {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--gray-light);
+  border-radius: var(--radius);
+  font-size: 15px;
+  transition: var(--transition);
+  background: var(--gray-lighter);
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--medical-green);
+  background: white;
+}
+
+.form-group input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 16px;
+  margin-top: 12px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--gradient-medical);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.auth-btn:hover:not(:disabled) {
+  box-shadow: 0 5px 20px rgba(13, 148, 136, 0.5);
+  transform: translateY(-1px);
+}
+
+.auth-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-switch {
+  text-align: center;
+  color: var(--gray);
+  font-size: 14px;
+  margin-top: 24px;
+}
+
+.back-home {
+  text-align: center;
+  margin-top: 16px;
+}
+
+.back-home a {
+  color: var(--gray);
+  text-decoration: none;
+  font-size: 14px;
+  transition: var(--transition);
+}
+
+.back-home a:hover {
+  color: var(--medical-green);
+}
+
+/* ========================================
+   📅 BOOK APPOINTMENT PAGE
+   ======================================== */
+.page-container {
+  min-height: calc(100vh - 80px);
+  padding: 120px 40px 60px;
+  background: var(--gray-lighter);
+}
+
+.booking-page {
+  max-width: 600px;
+  margin: 0 auto;
+  background: white;
+  padding: 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.booking-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.success-message {
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid var(--success);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 24px;
+  color: var(--success);
+  font-weight: 500;
+  text-align: center;
+}
+
+.booking-page .error-message {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  color: var(--danger);
+  font-size: 14px;
+}
+
+.booking-section {
+  margin-bottom: 28px;
+}
+
+.booking-section h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.booking-select {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--gray-light);
+  border-radius: var(--radius);
+  font-size: 15px;
+  background: var(--gray-lighter);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.booking-select:focus {
+  outline: none;
+  border-color: var(--medical-green);
+  background: white;
+}
+
+.booking-date-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid var(--gray-light);
+  border-radius: var(--radius);
+  font-size: 15px;
+  background: var(--gray-lighter);
+  transition: var(--transition);
+}
+
+.booking-date-input:focus {
+  outline: none;
+  border-color: var(--medical-green);
+  background: white;
+}
+
+.loading-slots {
+  text-align: center;
+  padding: 40px;
+  color: var(--gray);
+}
+
+.loading-slots .loading-spinner {
+  margin: 0 auto 16px;
+}
+
+.no-slots {
+  text-align: center;
+  padding: 32px;
+  background: var(--gray-lighter);
+  border-radius: var(--radius);
+  color: var(--gray);
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+}
+
+.slot-btn {
+  padding: 14px 16px;
+  border: 2px solid var(--gray-light);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--dark);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.slot-btn:hover {
+  border-color: var(--medical-green);
+  color: var(--medical-green);
+}
+
+.slot-btn.selected {
+  background: var(--medical-green);
+  border-color: var(--medical-green);
+  color: white;
+}
+
+.selected-doctor-info {
+  margin-top: 32px;
+  padding: 24px;
+  background: var(--gray-lighter);
+  border-radius: var(--radius);
+}
+
+.selected-doctor-info h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.selected-doctor-info .doctor-card {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.selected-doctor-info .doctor-card img {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.selected-doctor-info .doctor-info h4 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.selected-doctor-info .doctor-info p {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+.booking-actions {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+}
+
+.booking-submit-btn {
+  flex: 1;
+  padding: 16px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--gradient-medical);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.booking-submit-btn:hover:not(:disabled) {
+  box-shadow: 0 5px 20px rgba(13, 148, 136, 0.5);
+}
+
+.booking-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.booking-back-btn {
+  padding: 16px 32px;
+  border: 2px solid var(--gray-light);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--gray);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.booking-back-btn:hover {
+  border-color: var(--gray);
+  color: var(--dark);
+}
+
+/* ========================================
+   📅 MY APPOINTMENTS PAGE
+   ======================================== */
+.my-appointments-page {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.my-appointments-page h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.no-appointments-container {
+  background: white;
+  padding: 60px 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+
+.empty-state h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  color: var(--gray);
+  margin-bottom: 24px;
+}
+
+.book-now-btn {
+  padding: 14px 32px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--gradient-medical);
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.book-now-btn:hover {
+  box-shadow: 0 5px 20px rgba(13, 148, 136, 0.5);
+}
+
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.appointment-card {
+  background: white;
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.appointment-card:hover {
+  box-shadow: var(--shadow);
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.appointment-card .doctor-info {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.appointment-card .doctor-info img {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius);
+  object-fit: cover;
+}
+
+.appointment-card .doctor-details h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.appointment-card .doctor-details p {
+  font-size: 14px;
+  color: var(--gray);
+}
+
+.appointment-status {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-confirmed {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--success);
+}
+
+.status-cancelled {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger);
+}
+
+.status-pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+.status-completed {
+  background: rgba(8, 145, 178, 0.1);
+  color: var(--medical-blue);
+}
+
+.status-default {
+  background: var(--gray-lighter);
+  color: var(--gray);
+}
+
+.appointment-body {
+  padding: 16px 0;
+  border-top: 1px solid var(--gray-light);
+  border-bottom: 1px solid var(--gray-light);
+}
+
+.appointment-info {
+  display: flex;
+  gap: 32px;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.info-value {
+  color: var(--gray);
+}
+
+.appointment-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.appointment-actions .cancel-btn {
+  padding: 10px 20px;
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--danger);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.appointment-actions .cancel-btn:hover:not(:disabled) {
+  background: var(--danger);
+  color: white;
+}
+
+.appointment-actions .cancel-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ========================================
+   🔄 LOADING STATES
+   ======================================== */
+.loading-container {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--gray-light);
+  border-top-color: var(--medical-green);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.error-container {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: var(--radius-lg);
+}
+
+.error-container p {
+  color: var(--danger);
+  margin-bottom: 20px;
+}
+
+.error-container button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--medical-green);
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
