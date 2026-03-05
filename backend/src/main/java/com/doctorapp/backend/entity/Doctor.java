@@ -1,110 +1,106 @@
 package com.doctorapp.backend.entity;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.persistence.criteria.CriteriaBuilder;
 
 @Entity
 @Table(name = "doctors")
-public class Doctor
-{
+public class Doctor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doctor_id")
-    private Integer docterid;
-
+    private Integer doctorId;
 
     @Column(nullable = false)
     private String name;
 
-
     @Column(nullable = false, unique = true)
     private String email;
-
 
     @Column(nullable = false)
     private String password;
 
     private String qualification;
+
     private String specialization;
+
     private Integer experience;
 
-
-
-    @Column(name = "image_url")
-    private String imageUrl;
+    @Column(name = "image_data", columnDefinition = "BYTEA")
+    private byte[] imageData;
 
     @Column(nullable = false)
     private String status;
 
+    // getters and setters
 
-
-    public String getImageUrl() {
-        return imageUrl;
+    public Integer getDoctorId() {
+        return doctorId;
     }
 
-    public Integer getDocterid() {
-        return docterid;
+    public void setDoctorId(Integer doctorId) {
+        this.doctorId = doctorId;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getEmail() {
         return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getQualification() {
-        return qualification;
-    }
-
-    public String getSpecialization() {
-        return specialization;
-    }
-
-    public Integer getExperience() {
-        return experience;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setDocterid(Integer docterid) {
-        this.docterid = docterid;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public String getPassword() {
+        return password;
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
 
+    public String getQualification() {
+        return qualification;
+    }
+
     public void setQualification(String qualification) {
         this.qualification = qualification;
+    }
+
+    public String getSpecialization() {
+        return specialization;
     }
 
     public void setSpecialization(String specialization) {
         this.specialization = specialization;
     }
 
+    public Integer getExperience() {
+        return experience;
+    }
+
     public void setExperience(Integer experience) {
         this.experience = experience;
     }
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
+    public byte[] getImageData() {
+        return imageData;
+    }
+
+    public void setImageData(byte[] imageData) {
+        this.imageData = imageData;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void setStatus(String status) {

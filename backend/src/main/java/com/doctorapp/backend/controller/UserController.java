@@ -13,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserService userService;
@@ -22,8 +23,9 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signupUser(@RequestBody User user) {
-        return userService.signup(user);
+    public ResponseEntity<User> signupUser(@RequestBody User user) {
+        User savedUser = userService.signup(user);
+        return ResponseEntity.ok(savedUser);
     }
 
     @GetMapping("/test")
@@ -32,11 +34,7 @@ public class UserController {
         return "testing done";
     }
 
-    @GetMapping("getcsrf")
-    public CsrfToken gettock(HttpServletRequest req)
-    {
-        return (CsrfToken) req.getAttribute("_csrf");
-    }
+
 
 
 

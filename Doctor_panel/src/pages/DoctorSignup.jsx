@@ -1,22 +1,23 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../App'
+import { signupDoctor } from '../services/api'
 
 function DoctorSignup() {
-  const { loginDoctor } = useAuth()
   const navigate = useNavigate()
 
   const [formData, setFormData] = useState({
-    fullName: '',
+    name: '',
     email: '',
     password: '',
     qualification: '',
     specialization: '',
     experience: '',
-    imageUrl: ''
+    image: ''
   })
 
   const [imagePreview, setImagePreview] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -26,40 +27,71 @@ function DoctorSignup() {
     }))
   }
 
-  const handleImageChange = (e) => {
+  // Convert image file to base64
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => {
+        resolve(reader.result)
+      }
+      reader.onerror = (error) => {
+        reject(error)
+      }
+    })
+  }
+
+  const handleImageChange = async (e) => {
     const file = e.target.files[0]
     if (file) {
-      // Create a local URL for preview
-      const previewUrl = URL.createObjectURL(file)
-      setImagePreview(previewUrl)
-      setFormData(prev => ({
-        ...prev,
-        imageUrl: previewUrl
-      }))
+      try {
+        // Create a local URL for preview
+        const previewUrl = URL.createObjectURL(file)
+        setImagePreview(previewUrl)
+
+        // Convert to base64
+        const base64 = await convertToBase64(file)
+        setFormData(prev => ({
+          ...prev,
+          image: base64
+        }))
+      } catch (error) {
+        console.error('Error converting image:', error)
+      }
     }
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
+    setLoading(true)
+    setError('')
 
-    // Create doctor object
-    const newDoctor = {
-      id: Date.now(),
-      name: formData.fullName,
-      email: formData.email,
-      qualification: formData.qualification,
-      specialization: formData.specialization,
-      experience: formData.experience,
-      imageUrl: formData.imageUrl,
-      status: 'PENDING',
-      role: 'DOCTOR'
+    try {
+      // Prepare signup data
+      const signupData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        qualification: formData.qualification,
+        specialization: formData.specialization,
+        experience: formData.experience,
+        image: formData.image
+      }
+
+      // Call signup API
+      await signupDoctor(signupData)
+
+      // Show success message
+      alert('Your account is pending admin approval')
+
+      // Redirect to login
+      navigate('/login')
+    } catch (err) {
+      console.error('Signup error:', err)
+      setError(err.response?.data?.message || err.response?.data?.error || 'Signup failed. Please try again.')
+    } finally {
+      setLoading(false)
     }
-
-    // Save doctor (mock - would be API call in production)
-    loginDoctor(newDoctor)
-
-    // Redirect to dashboard with message
-    navigate('/dashboard', { state: { message: 'Your profile is under review. Admin approval required.' } })
   }
 
   return (
@@ -67,6 +99,12 @@ function DoctorSignup() {
       <div className="auth-card">
         <h1 className="auth-title">Doctor Signup</h1>
         <p className="auth-subtitle">Create your doctor profile</p>
+
+        {error && (
+          <div className="error-message" style={{ marginBottom: '1rem', color: '#dc2626', backgroundColor: '#fef2f2', padding: '0.75rem', borderRadius: '0.375rem' }}>
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit}>
           {/* Profile Image */}
@@ -94,9 +132,9 @@ function DoctorSignup() {
             <label className="form-label">Full Name</label>
             <input
               type="text"
-              name="fullName"
+              name="name"
               className="form-input"
-              value={formData.fullName}
+              value={formData.name}
               onChange={handleChange}
               required
               placeholder="Enter your full name"
@@ -195,8 +233,8 @@ function DoctorSignup() {
           </div>
 
           {/* Submit Button */}
-          <button type="submit" className="btn btn-primary">
-            Sign Up
+          <button type="submit" className="btn btn-primary" disabled={loading}>
+            {loading ? 'Signing up...' : 'Sign Up'}
           </button>
         </form>
 

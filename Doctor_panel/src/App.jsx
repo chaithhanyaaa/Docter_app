@@ -1,4 +1,4 @@
-import { useState, createContext, useContext } from 'react'
+import { useState, createContext, useContext, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import DoctorNavbar from './components/DoctorNavbar'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -6,31 +6,50 @@ import DoctorSignup from './pages/DoctorSignup'
 import DoctorLogin from './pages/DoctorLogin'
 import DoctorDashboard from './pages/DoctorDashboard'
 import Appointments from './pages/Appointments'
+import { getStoredDoctor, getToken, clearAuthData } from './services/api'
 
 // Create auth context
 const AuthContext = createContext(null)
 
 // Auth provider component
-export function AuthProvider({ children }) 
-{
+export function AuthProvider({ children }) {
   const [doctor, setDoctor] = useState(null)
+  const [loading, setLoading] = useState(true)
+
+  // Check for existing auth on mount
+  useEffect(() => {
+    const token = getToken()
+    const storedDoctor = getStoredDoctor()
+    
+    if (token && storedDoctor) {
+      setDoctor(storedDoctor)
+    } else if (token) {
+      // Token exists but no doctor data - clear invalid state
+      clearAuthData()
+    }
+    setLoading(false)
+  }, [])
 
   const loginDoctor = (doctorData) => {
     setDoctor(doctorData)
   }
 
   const logoutDoctor = () => {
+    clearAuthData()
     setDoctor(null)
   }
 
   const updateDoctorStatus = (status) => {
     if (doctor) {
-      setDoctor({ ...doctor, status })
+      const updatedDoctor = { ...doctor, status }
+      setDoctor(updatedDoctor)
+      // Update localStorage
+      localStorage.setItem('doctorData', JSON.stringify(updatedDoctor))
     }
   }
 
   return (
-    <AuthContext.Provider value={{ doctor, loginDoctor, logoutDoctor, updateDoctorStatus }}>
+    <AuthContext.Provider value={{ doctor, loginDoctor, logoutDoctor, updateDoctorStatus, loading }}>
       {children}
     </AuthContext.Provider>
   )
